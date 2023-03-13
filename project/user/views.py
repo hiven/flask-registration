@@ -1,13 +1,6 @@
-# project/user/views.py
-
-
-#################
-#### imports ####
-#################
-
 import datetime
 
-from flask import render_template, Blueprint, url_for, \
+from flask import render_template, url_for, \
     redirect, flash, request
 from flask_login import login_user, logout_user, \
     login_required, current_user
@@ -18,13 +11,6 @@ from project.token import generate_confirmation_token, confirm_token
 from project.decorators import check_confirmed
 from project import db, bcrypt
 from .forms import LoginForm, RegisterForm, ChangePasswordForm, ForgotForm
-
-
-################
-#### config ####
-################
-
-user_blueprint = Blueprint('user', __name__,)
 
 
 ################
