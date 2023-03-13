@@ -128,32 +128,25 @@ def resend_confirmation():
 def forgot():
     form = ForgotForm(request.form)
     if form.validate_on_submit():
-
         user = User.query.filter_by(email=form.email.data).first()
         token = generate_confirmation_token(user.email)
-
         user.password_reset_token = token
         db.session.commit()
-
         reset_url = url_for('user.forgot_new', token=token, _external=True)
         html = render_template('user/reset.html',
                                username=user.email,
                                reset_url=reset_url)
         subject = "Reset your password"
         send_email(user.email, subject, html)
-
         flash('A password reset email has been sent via email.', 'success')
         return redirect(url_for("main.home"))
-
     return render_template('user/forgot.html', form=form)
 
 
 @user_blueprint.route('/forgot/new/<token>', methods=['GET', 'POST'])
 def forgot_new(token):
-
     email = confirm_token(token)
     user = User.query.filter_by(email=email).first_or_404()
-
     if user.password_reset_token is not None:
         form = ChangePasswordForm(request.form)
         if form.validate_on_submit():
@@ -162,12 +155,9 @@ def forgot_new(token):
                 user.password = bcrypt.generate_password_hash(form.password.data)
                 user.password_reset_token = None
                 db.session.commit()
-
                 login_user(user)
-
                 flash('Password successfully changed.', 'success')
                 return redirect(url_for('user.profile'))
-
             else:
                 flash('Password change was unsuccessful.', 'danger')
                 return redirect(url_for('user.profile'))
@@ -176,5 +166,4 @@ def forgot_new(token):
             return render_template('user/forgot_new.html', form=form)
     else:
         flash('Can not reset the password, try again.', 'danger')
-
     return redirect(url_for('main.home'))
